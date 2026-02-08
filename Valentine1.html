@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Be My Valentine 💖</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: #fde2e4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Card */
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+  animation: fadeIn 1s ease forwards;
+  z-index: 5;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.buttons {
+  position: relative;
+  height: 80px;
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  position: absolute;
+  transition: all 0.3s ease;
+}
+
+#yesBtn {
+  background: #ff4d6d;
+  color: white;
+  left: 15%;
+}
+
+#noBtn {
+  background: #e0e0e0;
+  right: 15%;
+}
+
+/* YES SCREEN */
+.result {
+  display: none;
+}
+
+/* SLIDESHOW */
+.slideshow {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  margin-top: 15px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+}
+
+.slideshow img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.slideshow img.active {
+  opacity: 1;
+}
+
+/* Overlay text */
+.overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  color: white;
+  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+  text-align: center;
+}
+
+/* Falling hearts (after YES only) */
+.heart {
+  position: absolute;
+  font-size: 20px;
+  animation: fall 6s linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes fall {
+  from { transform: translateY(-10vh); }
+  to { transform: translateY(110vh); }
+}
+
+/* Confetti */
+.confetti {
+  position: absolute;
+  font-size: 22px;
+  animation: explode 1.3s ease-out forwards;
+}
+
+@keyframes explode {
+  to {
+    transform: translate(var(--x), var(--y)) scale(1.5);
+    opacity: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- QUESTION CARD -->
+<div class="card" id="card">
+  <h2>Sidhu,<br>will you be my Valentine? 💖</h2>
+  <p id="text">Choose wisely 😉</p>
+
+  <div class="buttons">
+    <button id="yesBtn">YES</button>
+    <button id="noBtn">NO</button>
+  </div>
+</div>
+
+<!-- YES SCREEN -->
+<div class="card result" id="result">
+  <h2>💖 YAY!!! 💖</h2>
+
+  <div class="slideshow">
+    <img src="./love1.jpg" class="active">
+    <img src="./love2.jpg">
+    <img src="./love3.jpg">
+
+    <div class="overlay">
+      Every moment with you feels like magic ❤️
+    </div>
+  </div>
+
+  <p>I love you endlessly 💕</p>
+</div>
+
+<audio id="music" src="./music.mp3" loop></audio>
+
+<script>
+/* NO button chaos */
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const text = document.getElementById("text");
+const card = document.getElementById("card");
+const result = document.getElementById("result");
+const music = document.getElementById("music");
+
+const messages = [
+  "💔 Don’t do this to me",
+  "😢 Please no",
+  "😭 This could be a mistake"
+];
+
+let noScale = 1, noOpacity = 1, yesScale = 1, count = 0;
+
+function moveNo() {
+  noScale -= 0.1;
+  noOpacity -= 0.15;
+
+  noBtn.style.left = Math.random() * 70 + "%";
+  noBtn.style.top = Math.random() * 70 + "%";
+  noBtn.style.transform = `scale(${noScale})`;
+  noBtn.style.opacity = noOpacity;
+
+  yesScale += 0.1;
+  yesBtn.style.transform = `scale(${yesScale})`;
+
+  text.textContent = messages[count % messages.length];
+  count++;
+}
+
+noBtn.addEventListener("mouseover", moveNo);
+noBtn.addEventListener("click", moveNo);
+
+/* YES click */
+yesBtn.addEventListener("click", () => {
+  card.style.display = "none";
+  result.style.display = "block";
+  music.play();
+  startSlideshow();
+  heartRain();
+  confetti();
+});
+
+/* Slideshow logic (FIXED) */
+function startSlideshow() {
+  const slides = document.querySelectorAll(".slideshow img");
+  let index = 0;
+
+  setInterval(() => {
+    slides[index].classList.remove("active");
+    index = (index + 1) % slides.length;
+    slides[index].classList.add("active");
+  }, 3000);
+}
+
+/* Heart rain AFTER YES */
+function heartRain() {
+  setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.innerHTML = "❤️";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.animationDuration = 4 + Math.random() * 3 + "s";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 7000);
+  }, 400);
+}
+
+/* Confetti burst */
+function confetti() {
+  for (let i = 0; i < 30; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.innerHTML = Math.random() > 0.5 ? "🎉" : "💖";
+    c.style.left = "50%";
+    c.style.top = "50%";
+    c.style.setProperty("--x", (Math.random()*400 - 200) + "px");
+    c.style.setProperty("--y", (Math.random()*400 - 200) + "px");
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 1300);
+  }
+}
+</script>
+
+</body>
+</html>
