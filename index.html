@@ -21,21 +21,21 @@ body {
   overflow: hidden;
 }
 
-/* Card */
+/* CARD */
 .card {
   background: white;
-  padding: 25px;
+  padding: 24px;
   border-radius: 18px;
-  width: 90%;
+  width: 92%;
   max-width: 360px;
   text-align: center;
   box-shadow: 0 20px 40px rgba(0,0,0,0.18);
-  animation: fadeIn 1s ease forwards;
+  animation: fadeIn 0.9s ease forwards;
   z-index: 5;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
+  from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: scale(1); }
 }
 
@@ -52,7 +52,7 @@ button {
   cursor: pointer;
   font-size: 14px;
   position: absolute;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 #yesBtn {
@@ -66,7 +66,7 @@ button {
   right: 15%;
 }
 
-/* YES SCREEN */
+/* RESULT */
 .result {
   display: none;
 }
@@ -92,11 +92,7 @@ button {
   transition: opacity 1.2s ease;
 }
 
-.slideshow img.active {
-  opacity: 1;
-}
-
-/* Overlay text */
+/* TEXT OVERLAY */
 .overlay {
   position: absolute;
   bottom: 0;
@@ -104,11 +100,11 @@ button {
   padding: 14px;
   font-size: 16px;
   color: white;
-  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+  background: linear-gradient(to top, rgba(0,0,0,0.65), transparent);
   text-align: center;
 }
 
-/* Falling hearts (after YES only) */
+/* HEART RAIN */
 .heart {
   position: absolute;
   font-size: 20px;
@@ -121,7 +117,7 @@ button {
   to { transform: translateY(110vh); }
 }
 
-/* Confetti */
+/* CONFETTI */
 .confetti {
   position: absolute;
   font-size: 22px;
@@ -130,7 +126,7 @@ button {
 
 @keyframes explode {
   to {
-    transform: translate(var(--x), var(--y)) scale(1.5);
+    transform: translate(var(--x), var(--y)) scale(1.4);
     opacity: 0;
   }
 }
@@ -139,7 +135,7 @@ button {
 
 <body>
 
-<!-- QUESTION CARD -->
+<!-- QUESTION -->
 <div class="card" id="card">
   <h2>Sidhu,<br>will you be my Valentine? 💖</h2>
   <p id="text">Choose wisely 😉</p>
@@ -150,12 +146,12 @@ button {
   </div>
 </div>
 
-<!-- YES SCREEN -->
+<!-- RESULT -->
 <div class="card result" id="result">
   <h2>💖 YAY!!! 💖</h2>
 
   <div class="slideshow">
-    <img src="./love1.jpg" class="active">
+    <img src="./love1.jpg">
     <img src="./love2.jpg">
     <img src="./love3.jpg">
 
@@ -170,7 +166,6 @@ button {
 <audio id="music" src="./music.mp3" loop></audio>
 
 <script>
-/* NO button chaos */
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const text = document.getElementById("text");
@@ -178,6 +173,7 @@ const card = document.getElementById("card");
 const result = document.getElementById("result");
 const music = document.getElementById("music");
 
+/* NO button chaos */
 const messages = [
   "💔 Don’t do this to me",
   "😢 Please no",
@@ -205,30 +201,32 @@ function moveNo() {
 noBtn.addEventListener("mouseover", moveNo);
 noBtn.addEventListener("click", moveNo);
 
-/* YES click */
+/* YES CLICK */
 yesBtn.addEventListener("click", () => {
   card.style.display = "none";
   result.style.display = "block";
   music.play();
   startSlideshow();
-  heartRain();
+  startHearts();
   confetti();
 });
 
-/* Slideshow logic (FIXED) */
+/* SLIDESHOW (FIXED) */
 function startSlideshow() {
   const slides = document.querySelectorAll(".slideshow img");
   let index = 0;
 
+  slides[0].style.opacity = 1;
+
   setInterval(() => {
-    slides[index].classList.remove("active");
+    slides[index].style.opacity = 0;
     index = (index + 1) % slides.length;
-    slides[index].classList.add("active");
+    slides[index].style.opacity = 1;
   }, 3000);
 }
 
-/* Heart rain AFTER YES */
-function heartRain() {
+/* HEARTS AFTER YES */
+function startHearts() {
   setInterval(() => {
     const h = document.createElement("div");
     h.className = "heart";
@@ -240,7 +238,7 @@ function heartRain() {
   }, 400);
 }
 
-/* Confetti burst */
+/* CONFETTI */
 function confetti() {
   for (let i = 0; i < 30; i++) {
     const c = document.createElement("div");
